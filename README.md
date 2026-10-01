@@ -21,7 +21,7 @@
 | Кейс | Домен | Фокус |
 |:---|:---|:---|
 | Смена | продуктовый кейс под mobile / B2C | session lifecycle, REST API, State Machine, ERD, продуктовые события, ошибки и повторные запросы |
-| 🌱 Агроконтур | enterprise / Агротех | master data, Production → WMS / ERP, интеграционные контракты, событийный обмен, модели данных; пакет артефактов v1.0; реконструкция |
+| [🌱 Агроконтур](https://github.com/spicerrr/sa-portfolio/blob/main/README.md) | enterprise / Агротех | master data, Production → WMS / ERP, интеграционные контракты, событийный обмен, модели данных; пакет артефактов v1.0; реконструкция |
 
 
 ---
