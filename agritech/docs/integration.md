@@ -12,6 +12,16 @@
 
 Один OpenAPI-документ объединяет две области: путь mappings относится к MDM, пути harvest — к Production. Реальные URL задаются на уровне path servers. Демонстрационные имена `.example` не являются работающими адресами.
 
+## UML последовательности UC-02 / UC-03
+
+![Регистрация и приёмка](../diagrams/rendered/sequence.svg)
+
+[PlantUML](../diagrams/sequence.puml). Пользовательская регистрация заканчивается после commit; публикация продолжается независимо.
+
+![Подтверждение приёмки и обновление проекции](../diagrams/rendered/receipt-sequence.svg)
+
+[PlantUML приёмки](../diagrams/receipt-sequence.puml). Склад фиксирует своё измерение, затем Production получает проекцию факта. Сценарии ошибок — в [Use Case](use-cases.md) и ниже в правилах доставки.
+
 ## Маршрутизация RabbitMQ
 
 Exchange `agri.events` типа topic, durable. События persistent; рабочие очереди durable quorum. `eventType` — базовый тип, `eventVersion` — major-версия; routing key складывается как `eventType + '.v' + eventVersion`.

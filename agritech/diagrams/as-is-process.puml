@@ -1,0 +1,40 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title AS-IS: связывание локальных документов
+start
+partition "Производственный учёт" {
+   :Получить документ сбора;
+   :Внести строку в локальный журнал;
+   :Передать реквизиты груза складу;
+ }
+partition "Склад" {
+   :Найти локальную номенклатуру;
+   :Измерить массу и оформить приёмку;
+   :Указать текстовую ссылку на сбор;
+ }
+partition "BI / сверка" {
+   :Получить снимки журналов и посадок;
+   :Сопоставить локальные сорта;
+   if (Связь документов подтверждена?) then (да)
+     :Связать две исходные строки;
+     :Проверить единицы и площади;
+     :Рассчитать показатели;
+   else (нет)
+     :Сохранить несопоставленную запись;
+     :Владельцы сверяют первичные документы;
+   endif
+ }
+stop
+@enduml

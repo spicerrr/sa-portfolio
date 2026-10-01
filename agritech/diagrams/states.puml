@@ -1,16 +1,29 @@
 @startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
 title Локальная проекция приёмки
-[*] --> NO_RECEIPT : Production зарегистрировал партию
-NO_RECEIPT --> HAS_RECEIPT : валидное warehouse.lot.received.v1
-commit факта + inbox
-HAS_RECEIPT --> HAS_RECEIPT : повтор того же события
-без нового эффекта
+state "Подтверждение отсутствует" as NO_RECEIPT
+state "Подтверждение сохранено" as HAS_RECEIPT
+[*] --> NO_RECEIPT : зарегистрирован сбор
+NO_RECEIPT --> HAS_RECEIPT : валидное событие приёмки\ncommit проекции + inbox
+HAS_RECEIPT --> HAS_RECEIPT : повтор события\nбез нового эффекта
 note right of NO_RECEIPT
-Нет подтверждения в локальной проекции.
-Не означает, что WMS не приняла груз.
+Отсутствие проекции не доказывает,
+что груз физически не принят.
 end note
 note right of HAS_RECEIPT
-Одна полная приёмка в v1.
-Исправление и частичная приёмка вне модели.
+Одна полная приёмка.
+Исправление требует отдельного процесса.
 end note
 @enduml

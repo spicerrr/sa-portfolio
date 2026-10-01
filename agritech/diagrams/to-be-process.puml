@@ -1,0 +1,42 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title TO-BE: регистрация и независимый обмен
+start
+partition "Регистрация сбора" {
+   :Оператор: подготовить исходный ключ\nи реквизиты документа;
+   if (Сорт, участок и сезон согласованы?) then (да)
+     :Production: проверить права,\nдату, массу и уникальность;
+   else (нет)
+     :Отказать без создания партии;
+     :НСИ / агроном: согласовать ссылку — UC-01;
+     stop
+   endif
+   :Production: commit партии,\nидемпотентности и outbox;
+ }
+fork
+   :Оператор: получить 201 и batchId;
+fork again
+   partition "Независимая доставка и приёмка" {
+     :Издатель: отправить событие;\nповторять при временном сбое;
+     :WMS: commit inbox\nи ожидаемой приёмки;
+     :Кладовщик: найти batchId,\nизмерить массу и подтвердить приёмку;
+     :WMS: commit факта и outbox;
+     :Издатель WMS: передать событие приёмки;
+     :Production / BI: обновить проекции\nидемпотентно;
+     :Отчёт: показать полноту и разницу масс;
+   }
+end fork
+stop
+@enduml

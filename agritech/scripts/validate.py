@@ -10,6 +10,7 @@ import yaml
 from jsonschema import Draft202012Validator, FormatChecker
 from openapi_spec_validator import validate_spec
 from normalize import resolve
+from check_legacy import check
 ROOT = Path(__file__).resolve().parents[1]
 
 def main():
@@ -45,9 +46,22 @@ def main():
     referenced = set(re.findall(r'\b(?:BR|FR|NFR|CON)-\d+\b', acceptance))
     assert rule_ids == referenced, (rule_ids - referenced, referenced - rule_ids)
     for md in ROOT.rglob('*.md'):
-        for target in re.findall(r'(?<!!)\[[^\]]*\]\(([^)]+)\)', md.read_text()):
+        for target in re.findall(r'!?\[[^\]]*\]\(([^)]+)\)', md.read_text()):
             if target.startswith(('http:', 'https:', 'mailto:', '#')): continue
             assert (md.parent / target.split('#')[0]).resolve().exists(), (md, target)
+    legacy = check()
+    assert [r['status'] for r in legacy] == [
+        'READY', 'DUPLICATE', 'CONFLICT', 'UNRESOLVED', 'INVALID_UNIT']
+    assert Decimal(legacy[0]['weight_kg']) == Decimal('8420')
+    use_cases = (ROOT / 'docs/use-cases.md').read_text()
+    for number in range(1, 6):
+        assert f'## UC-{number:02d}' in use_cases
+    for source in (ROOT / 'diagrams').glob('*.puml'):
+        rendered = ROOT / 'diagrams/rendered' / (source.stem + '.svg')
+        tree = ET.parse(rendered)
+        svg_text = ''.join(tree.getroot().itertext())
+        assert 'Syntax Error' not in svg_text and 'Syntax error' not in svg_text, source
+        assert rendered.stat().st_size > 1000, source
     bpmn = ET.parse(ROOT / 'diagrams/batch-process.bpmn').getroot()
     elements = list(bpmn.iter())
     ids = [e.attrib['id'] for e in elements if 'id' in e.attrib]
@@ -64,6 +78,6 @@ def main():
     # Independent arithmetic of expected synthetic metric result.
     assert sum(map(Decimal, ['8.420', '1.580', '5.000'])) / Decimal('5') == Decimal('3')
     assert Decimal('8.370') - Decimal('8.420') == Decimal('-0.050')
-    print(f'OK: OpenAPI; event schemas/examples + negative checks; {len(rule_ids)} requirements covered; links; BPMN; Postman; MDM; metric arithmetic.')
+    print(f'OK: OpenAPI; event schemas/examples + negative checks; {len(rule_ids)} requirements covered; document/image links; 8 rendered UML; 5 use cases; legacy source decisions; BPMN; Postman; MDM; metric arithmetic.')
 
 if __name__ == '__main__': main()

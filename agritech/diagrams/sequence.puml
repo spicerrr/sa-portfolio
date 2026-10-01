@@ -1,29 +1,47 @@
 @startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title Регистрация: транзакция, публикация и восстановление ответа
 hide footbox
-actor Агроном as User
+actor "Оператор" as User
 participant "Production API" as API
 database "Production DB" as DB
-participant "Outbox publisher" as Pub
-queue RabbitMQ as MQ
-participant "WMS adapter / WMS" as WMS
-User -> API: POST harvest-batches + Idempotency-Key
-API -> API: Права, реплика MDM, участок/сезон/сорт
-API -> DB: BEGIN; batch + idempotency + outbox; COMMIT
-DB --> API: batchId
-API --> User: 201 REGISTERED
-Pub -> DB: Неподтверждённый outbox
-Pub -> MQ: harvest.batch.registered.v1
-mandatory + persistent
-MQ --> Pub: confirm (нет return)
-Pub -> DB: published_at
-MQ -> WMS: событие регистрации
-WMS -> WMS: Транзакция inbox + ожидаемая приёмка
-WMS --> MQ: ack после commit
-note over WMS: Кладовщик подтверждает приёмку;
-складской факт + WMS outbox в одной транзакции
-WMS -> MQ: warehouse.lot.received.v1
-через издатель WMS с confirms
-MQ -> API: production.receipts.v1 consumer
-API -> DB: BEGIN; receipt_projection + inbox; COMMIT
-API --> MQ: ack после commit
+participant "Издатель" as Pub
+queue "RabbitMQ" as MQ
+User -> API: POST /harvest-batches\nIdempotency-Key + исходный ключ
+API -> API: Права, формат, сорт / участок / сезон
+API -> DB: Найти результат по ключу идемпотентности
+alt Тот же ключ и прежнее тело
+    DB --> API: Исходный результат
+    API --> User: Исходные 201 и batchId
+else Ключ или исходный факт конфликтует
+    API --> User: 409; без нового факта
+else Новая допустимая запись
+    API -> DB: BEGIN; batch + idempotency + outbox
+    DB --> API: COMMIT
+    API --> User: 201 REGISTERED + batchId
+end
+note over API, DB
+Сбой до commit: нет частично созданного факта.
+Потеря ответа после commit: повтор с тем же ключом.
+end note
+Pub -> DB: Прочитать неподтверждённый outbox
+Pub -> MQ: persistent + mandatory\nharvest.batch.registered.v1
+MQ --> Pub: publisher confirm; нет return
+Pub -> DB: Установить published_at
+note over Pub, MQ
+Сбой после confirm до отметки: возможен дубль.
+Получатель обязан исключить повторный эффект.
+end note
 @enduml

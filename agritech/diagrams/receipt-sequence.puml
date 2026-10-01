@@ -1,0 +1,39 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title Приёмка: ожидаемая запись, складской факт и проекция
+hide footbox
+queue RabbitMQ as MQ
+participant "WMS consumer / сервис" as WMS
+database "WMS DB" as WDB
+actor "Кладовщик" as User
+participant "Production consumer" as PC
+MQ -> WMS: harvest.batch.registered.v1
+WMS -> WDB: BEGIN; inbox + ожидаемая приёмка
+WDB --> WMS: COMMIT
+WMS --> MQ: ack
+note over WMS, WDB: Повтор eventId не создаёт новую приёмку.
+User -> WMS: Подтвердить batchId и собственную массу
+WMS -> WDB: BEGIN; складской факт + WMS outbox
+WDB --> WMS: COMMIT
+WMS --> User: lotId
+WMS -> MQ: Через издатель outbox:\nwarehouse.lot.received.v1
+MQ -> PC: Событие приёмки
+PC -> PC: Commit: receipt_projection + inbox
+PC --> MQ: ack после commit
+note over PC
+Повтор после commit не меняет результат.
+Масса сбора остаётся в Production.
+end note
+@enduml

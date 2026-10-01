@@ -1,0 +1,63 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title Локальная модель Production и проекция приёмки WMS
+hide methods
+class "Канонический сорт" as Variety {
+  variety_id : text <<PK>>
+  canonical_name : text
+  active : boolean
+}
+class "Соответствие источника" as Mapping {
+  source_system : text <<PK>>
+  entity_type : text <<PK>>
+  source_id : text <<PK>>
+  variety_id : text <<FK>>
+  source_name : text
+}
+class "Участок" as Plot {
+  plot_id : text <<PK>>
+  plot_name : text
+}
+class "Участок в сезоне" as PlotSeason {
+  plot_id : text <<PK, FK>>
+  season : integer <<PK>>
+  variety_id : text <<FK>>
+  bearing_area_ha : numeric
+}
+class "Партия сбора" as Batch {
+  batch_id : text <<PK>>
+  plot_id, season, variety_id : <<FK>>
+  source_system, source_record_id : <<UK>>
+  harvest_date : date
+  weight_kg : numeric
+  status : REGISTERED
+}
+class "Проекция приёмки" as Receipt {
+  batch_id : text <<PK, FK>>
+  lot_id : text <<UK>>
+  received_weight_kg : numeric
+  received_at : timestamp
+  projected_at : timestamp
+}
+Variety "1" -- "0..*" Mapping
+Variety "1" -- "0..*" PlotSeason
+Plot "1" -- "0..*" PlotSeason
+PlotSeason "1" -- "0..*" Batch
+Batch "1" -- "0..1" Receipt
+note bottom of Receipt
+Одна полная приёмка: ограничение A-02.
+Оригинал факта принадлежит WMS.
+end note
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+left to right direction
+title Цели пользователей и граница решения
+actor "Ответственный за НСИ" as MDM
+actor "Главный агроном" as Agronom
+actor "Оператор учёта" as Operator
+actor "Кладовщик" as Warehouse
+actor "Руководитель производства" as Head
+actor "Аналитик BI" as BI
+rectangle "НСИ / Production / WMS / отчёт" {
+  usecase "UC-01\nСогласовать\nсоответствие сорта" as UC1
+  usecase "UC-02\nЗарегистрировать\nсбор" as UC2
+  usecase "UC-03\nПодтвердить\nполную приёмку" as UC3
+  usecase "UC-04\nПолучить\nпаспорт сорта" as UC4
+  usecase "UC-05\nРазобрать\nрасхождение" as UC5
+}
+MDM -- UC1
+Agronom -- UC1
+Operator -- UC2
+Warehouse -- UC3
+Head -- UC4
+Agronom -- UC4
+BI -- UC4
+BI -- UC5
+Warehouse -- UC5
+Operator -- UC5
+@enduml

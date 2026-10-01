@@ -1,0 +1,67 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 14
+skinparam ArrowColor #42637E
+skinparam classBackgroundColor #F4F8FB
+skinparam classBorderColor #42637E
+skinparam actorBorderColor #42637E
+skinparam usecaseBackgroundColor #F4F8FB
+skinparam usecaseBorderColor #42637E
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #A79151
+title Исходные структуры: локальные ключи и ручные связи
+hide methods
+class "Реестр посадок" as Planting {
+  plot_code
+  season
+  variety_text
+  bearing_area
+  area_unit
+}
+class "Сорт производства" as LegacyVariety {
+  legacy_variety_code
+  name
+}
+class "Строка сбора" as Harvest {
+  harvest_doc_no
+  line_no
+  plot_code
+  harvest_date
+  legacy_variety_code
+  weight
+  unit
+}
+class "Номенклатура склада" as WarehouseItem {
+  warehouse_item_code
+  name
+  unit
+}
+class "Строка приёмки" as Receipt {
+  warehouse_code
+  receipt_no
+  line_no
+  warehouse_item_code
+  received_at
+  weight
+  unit
+  harvest_ref_text
+}
+class "Номенклатура учёта" as ERPItem {
+  erp_item_code
+  name
+  accounting_group
+}
+LegacyVariety "1" -- "0..*" Harvest : локальный код
+WarehouseItem "1" -- "0..*" Receipt : локальный код
+Planting .. Harvest : участок + сезон\nтребует проверки
+LegacyVariety .. WarehouseItem : ручное соответствие
+WarehouseItem .. ERPItem : ручное соответствие
+Harvest .. Receipt : документная сверка\nгарантированного FK нет
+note bottom of Harvest
+Ключ документа действует в своей области нумерации.
+Координата строки выгрузки — происхождение снимка.
+end note
+@enduml

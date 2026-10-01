@@ -1,0 +1,3 @@
+snapshot_id,row_locator,warehouse_code,receipt_no,line_no,received_at,warehouse_item_code,item_name,weight,unit,harvest_ref_text
+WMS-A,receipts:2,WH-01,ПР-911,1,2026-08-14T12:00:00Z,WMS-V-22,Голден,8370,кг,1284
+WMS-A,receipts:3,WH-01,ПР-912,1,2026-08-14T13:00:00Z,WMS-V-22,Голден,1580,кг,
