@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Агроконтур — contract requests",
+    "name": "Агроконтур — запросы справочников и учёта сбора",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": "Заменить .example URL на стенд. Токен вводить локально. Для нового факта заменить idempotencyKey и sourceRecordId."
   },
@@ -38,7 +38,7 @@
   ],
   "item": [
     {
-      "name": "Resolve WMS variety",
+      "name": "Получить единый сорт по складскому коду",
       "request": {
         "method": "GET",
         "header": [],
@@ -46,7 +46,7 @@
       }
     },
     {
-      "name": "Register harvest",
+      "name": "Зарегистрировать сбор",
       "request": {
         "method": "POST",
         "header": [
@@ -84,7 +84,7 @@
       ]
     },
     {
-      "name": "Get harvest",
+      "name": "Открыть зарегистрированную партию",
       "request": {
         "method": "GET",
         "header": [],

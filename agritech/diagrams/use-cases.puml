@@ -14,7 +14,7 @@ skinparam noteBackgroundColor #FFF9E8
 skinparam noteBorderColor #A79151
 left to right direction
 title Цели пользователей и граница решения
-actor "Ответственный за НСИ" as MDM
+actor "Ответственный за справочники" as MDM
 actor "Главный агроном" as Agronom
 actor "Оператор учёта" as Operator
 actor "Кладовщик" as Warehouse

@@ -14,7 +14,7 @@ skinparam noteBackgroundColor #FFF9E8
 skinparam noteBorderColor #A79151
 title Локальная модель Production и проекция приёмки WMS
 hide methods
-class "Канонический сорт" as Variety {
+class "Единый сорт" as Variety {
   variety_id : text <<PK>>
   canonical_name : text
   active : boolean

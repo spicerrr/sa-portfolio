@@ -16,7 +16,7 @@ title Локальная проекция приёмки
 state "Подтверждение отсутствует" as NO_RECEIPT
 state "Подтверждение сохранено" as HAS_RECEIPT
 [*] --> NO_RECEIPT : зарегистрирован сбор
-NO_RECEIPT --> HAS_RECEIPT : валидное событие приёмки\ncommit проекции + inbox
+NO_RECEIPT --> HAS_RECEIPT : валидное событие приёмки\nсохранение складских сведений\nи номера сообщения
 HAS_RECEIPT --> HAS_RECEIPT : повтор события\nбез нового эффекта
 note right of NO_RECEIPT
 Отсутствие проекции не доказывает,

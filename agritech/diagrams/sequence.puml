@@ -16,32 +16,32 @@ title Регистрация: транзакция, публикация и во
 hide footbox
 actor "Оператор" as User
 participant "Production API" as API
-database "Production DB" as DB
+database "БД Production" as DB
 participant "Издатель" as Pub
 queue "RabbitMQ" as MQ
 User -> API: POST /harvest-batches\nIdempotency-Key + исходный ключ
 API -> API: Права, формат, сорт / участок / сезон
 API -> DB: Найти результат по ключу идемпотентности
-alt Тот же ключ и прежнее тело
+alt Тот же ключ и прежнее содержимое
     DB --> API: Исходный результат
-    API --> User: Исходные 201 и batchId
+    API --> User: Исходный ответ 201 и номер партии
 else Ключ или исходный факт конфликтует
     API --> User: 409; без нового факта
 else Новая допустимая запись
-    API -> DB: BEGIN; batch + idempotency + outbox
-    DB --> API: COMMIT
+    API -> DB: Сохранить партию, результат запроса\nи исходящее сообщение
+    DB --> API: Транзакция завершена
     API --> User: 201 REGISTERED + batchId
 end
 note over API, DB
-Сбой до commit: нет частично созданного факта.
-Потеря ответа после commit: повтор с тем же ключом.
+Сбой до сохранения: нет частично созданного факта.
+Потеря ответа после сохранения: повтор с тем же ключом.
 end note
-Pub -> DB: Прочитать неподтверждённый outbox
-Pub -> MQ: persistent + mandatory\nharvest.batch.registered.v1
-MQ --> Pub: publisher confirm; нет return
+Pub -> DB: Прочитать сообщения к отправке
+Pub -> MQ: Отправить сохраняемое сообщение\nharvest.batch.registered.v1
+MQ --> Pub: Брокер подтвердил публикацию
 Pub -> DB: Установить published_at
 note over Pub, MQ
-Сбой после confirm до отметки: возможен дубль.
-Получатель обязан исключить повторный эффект.
+Сбой после подтверждения брокера до отметки в БД: возможен дубль.
+Получатель распознаёт повтор и не создаёт новую запись.
 end note
 @enduml

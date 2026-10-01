@@ -1,8 +1,9 @@
 openapi: 3.0.3
 info:
-  title: Агроконтур — MDM / Production contracts
+  title: Агроконтур — API справочников и учёта сбора
   version: 1.0.0
-  description: Публичная реконструкция, без работающего стенда. См. docs/integration.md.
+  description: Поиск единого сорта по локальному коду, регистрация сбора и просмотр партии со сведениями о складской
+    приёмке.
 servers:
 - url: https://production.example
 security:
@@ -15,7 +16,7 @@ paths:
       operationId: resolveSourceMapping
       tags:
       - MDM
-      description: Роли mdm_reader или production_operator. Только утверждённые mappings.
+      description: Доступно читателю справочников или оператору производства. Возвращается только утверждённое соответствие.
       parameters:
       - name: sourceSystem
         in: query
@@ -24,6 +25,7 @@ paths:
           type: string
           minLength: 1
           maxLength: 100
+          description: Единый код сорта из согласованного справочника.
       - name: entityType
         in: query
         required: true
@@ -37,48 +39,49 @@ paths:
         schema: *id001
       responses:
         '200':
-          description: Approved mapping
+          description: Запрос выполнен.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mapping'
         '400': &id002
-          description: INVALID_REQUEST
+          description: Некорректный формат запроса.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '401': &id003
-          description: UNAUTHENTICATED
+          description: Пользователь не прошёл проверку подлинности.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '403': &id004
-          description: FORBIDDEN
+          description: Нет права на выполнение операции.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404': &id006
-          description: Not found
+          description: Запрошенная партия или соответствие сорта не найдены.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '503': &id005
-          description: Temporarily unavailable
+          description: Система временно недоступна.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      summary: Получить единый сорт по коду источника
   /api/v1/harvest-batches:
     post:
       operationId: registerHarvest
       tags:
       - Production
-      description: Роль production_operator. Атомарно batch + idempotency + outbox.
-        Повтор с тем же ключом/телом возвращает исходный 201.
+      description: Доступно оператору производства. Партия, результат запроса и сообщение к отправке сохраняются
+        одной транзакцией.
       parameters:
       - name: Idempotency-Key
         in: header
@@ -86,6 +89,7 @@ paths:
         schema: &id007
           type: string
           format: uuid
+          description: Общий номер для поиска связанных действий в журнале.
       requestBody:
         required: true
         content:
@@ -94,7 +98,7 @@ paths:
               $ref: '#/components/schemas/HarvestCreate'
       responses:
         '201':
-          description: Registered; не подтверждение приёмки
+          description: Сбор зарегистрирован; складская приёмка подтверждается отдельно.
           headers:
             Location:
               schema:
@@ -108,25 +112,25 @@ paths:
         '401': *id003
         '403': *id004
         '409':
-          description: Conflict
+          description: Конфликт повторного запроса или исходного документа.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '422':
-          description: Business validation failed
+          description: Масса, дата или связь сорта с участком не прошли проверку.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         '503': *id005
+      summary: Зарегистрировать сбор
   /api/v1/harvest-batches/{batchId}:
     get:
       operationId: getHarvest
       tags:
       - Production
-      description: Роль production_operator. Последняя локальная проекция, не прямой
-        запрос WMS.
+      description: Доступно оператору производства. Возвращаются сохранённый сбор и полученное подтверждение WMS.
       parameters:
       - name: batchId
         in: path
@@ -134,7 +138,7 @@ paths:
         schema: *id001
       responses:
         '200':
-          description: Batch and latest receipt projection
+          description: Запрос выполнен.
           content:
             application/json:
               schema:
@@ -144,6 +148,7 @@ paths:
         '403': *id004
         '404': *id006
         '503': *id005
+      summary: Получить сведения о партии
 components:
   securitySchemes:
     bearerAuth:
@@ -171,15 +176,18 @@ components:
           type: integer
           minimum: 2000
           maximum: 2100
+          description: Календарный год сезона сбора.
         harvestDate: &id011
           type: string
           format: date
+          description: Дата сбора.
         weightKg: &id012
           type: number
           minimum: 0
           exclusiveMinimum: true
           multipleOf: 0.001
           maximum: 999999999.999
+          description: Масса сбора в килограммах.
       example:
         sourceSystem: PRODUCTION
         sourceRecordId: SRC-1284
@@ -202,9 +210,11 @@ components:
           exclusiveMinimum: true
           multipleOf: 0.001
           maximum: 999999999.999
+          description: Масса приёмки, измеренная складом, в килограммах.
         receivedAt:
           type: string
           format: date-time
+          description: Время складской приёмки.
     HarvestBatch:
       type: object
       required:
@@ -260,6 +270,7 @@ components:
         varietyId: *id001
         canonicalName:
           type: string
+          description: Утверждённое название сорта.
         status:
           type: string
           enum:

@@ -12,28 +12,28 @@ skinparam usecaseBackgroundColor #F4F8FB
 skinparam usecaseBorderColor #42637E
 skinparam noteBackgroundColor #FFF9E8
 skinparam noteBorderColor #A79151
-title Приёмка: ожидаемая запись, складской факт и проекция
+title Приёмка: складской факт и получение подтверждения
 hide footbox
 queue RabbitMQ as MQ
-participant "WMS consumer / сервис" as WMS
-database "WMS DB" as WDB
+participant "Получатель WMS" as WMS
+database "БД WMS" as WDB
 actor "Кладовщик" as User
-participant "Production consumer" as PC
+participant "Получатель Production" as PC
 MQ -> WMS: harvest.batch.registered.v1
-WMS -> WDB: BEGIN; inbox + ожидаемая приёмка
-WDB --> WMS: COMMIT
-WMS --> MQ: ack
+WMS -> WDB: Сохранить номер сообщения\nи ожидаемую приёмку
+WDB --> WMS: Транзакция завершена
+WMS --> MQ: Подтверждение обработки (ack)
 note over WMS, WDB: Повтор eventId не создаёт новую приёмку.
-User -> WMS: Подтвердить batchId и собственную массу
-WMS -> WDB: BEGIN; складской факт + WMS outbox
-WDB --> WMS: COMMIT
+User -> WMS: Подтвердить batchId и массу приёмки
+WMS -> WDB: Сохранить факт приёмки\nи сообщение к отправке
+WDB --> WMS: Транзакция завершена
 WMS --> User: lotId
-WMS -> MQ: Через издатель outbox:\nwarehouse.lot.received.v1
+WMS -> MQ: Через отправителя сообщений:\nwarehouse.lot.received.v1
 MQ -> PC: Событие приёмки
-PC -> PC: Commit: receipt_projection + inbox
-PC --> MQ: ack после commit
+PC -> PC: Сохранить сведения о приёмке\nи номер обработанного сообщения
+PC --> MQ: Подтверждение после сохранения (ack)
 note over PC
-Повтор после commit не меняет результат.
+Повтор после сохранения не меняет результат.
 Масса сбора остаётся в Production.
 end note
 @enduml
