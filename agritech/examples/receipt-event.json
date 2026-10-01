@@ -1,0 +1,14 @@
+{
+  "eventId": "c3b874cb-11b9-4f20-883b-5c6580ac1e3f",
+  "eventType": "warehouse.lot.received",
+  "eventVersion": 1,
+  "occurredAt": "2026-08-14T10:00:00Z",
+  "correlationId": "93af8148-15ec-4ec7-854b-8bc887e75a90",
+  "producer": "WMS",
+  "payload": {
+    "batchId": "HB-2026-001284",
+    "lotId": "LOT-2026-0781",
+    "receivedWeightKg": 8370,
+    "receivedAt": "2026-08-14T10:00:00Z"
+  }
+}

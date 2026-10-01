@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_Agri" targetNamespace="https://portfolio.example/agri">
+  <bpmn:collaboration id="Collaboration_Agri">
+    <bpmn:participant id="Pool_Production" name="Production" processRef="Process_Production" />
+    <bpmn:participant id="Pool_WMS" name="WMS" processRef="Process_WMS" />
+    <bpmn:messageFlow id="Message_Registration" name="harvest.batch.registered.v1" sourceRef="P_Send" targetRef="W_Start" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_Production" isExecutable="false">
+    <bpmn:startEvent id="P_Start" name="Факт сбора" />
+    <bpmn:userTask id="P_Register" name="Записать и проверить факт" />
+    <bpmn:serviceTask id="P_Save" name="Сохранить batch и outbox" />
+    <bpmn:sendTask id="P_Send" name="Передать регистрацию" />
+    <bpmn:endEvent id="P_End" name="Факт зарегистрирован" />
+    <bpmn:sequenceFlow id="Production_Flow_0" sourceRef="P_Start" targetRef="P_Register" />
+    <bpmn:sequenceFlow id="Production_Flow_1" sourceRef="P_Register" targetRef="P_Save" />
+    <bpmn:sequenceFlow id="Production_Flow_2" sourceRef="P_Save" targetRef="P_Send" />
+    <bpmn:sequenceFlow id="Production_Flow_3" sourceRef="P_Send" targetRef="P_End" />
+  </bpmn:process>
+  <bpmn:process id="Process_WMS" isExecutable="false">
+    <bpmn:startEvent id="W_Start" name="Регистрация поступила">
+      <bpmn:messageEventDefinition id="Message_Start" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="W_Expected" name="Создать ожидаемую приёмку" />
+    <bpmn:userTask id="W_Receive" name="Подтвердить приёмку" />
+    <bpmn:sendTask id="W_Send" name="Передать факт приёмки" />
+    <bpmn:endEvent id="W_End" name="Приёмка завершена" />
+    <bpmn:sequenceFlow id="WMS_Flow_0" sourceRef="W_Start" targetRef="W_Expected" />
+    <bpmn:sequenceFlow id="WMS_Flow_1" sourceRef="W_Expected" targetRef="W_Receive" />
+    <bpmn:sequenceFlow id="WMS_Flow_2" sourceRef="W_Receive" targetRef="W_Send" />
+    <bpmn:sequenceFlow id="WMS_Flow_3" sourceRef="W_Send" targetRef="W_End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Agri">
+    <bpmndi:BPMNPlane id="Plane_Agri" bpmnElement="Collaboration_Agri">
+      <bpmndi:BPMNShape id="Shape_Pool_Production" bpmnElement="Pool_Production" isHorizontal="true">
+        <dc:Bounds x="40" y="100" width="1000" height="210" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Pool_WMS" bpmnElement="Pool_WMS" isHorizontal="true">
+        <dc:Bounds x="40" y="350" width="1000" height="210" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_P_Start" bpmnElement="P_Start">
+        <dc:Bounds x="100" y="165" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_P_Register" bpmnElement="P_Register">
+        <dc:Bounds x="290" y="165" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_P_Save" bpmnElement="P_Save">
+        <dc:Bounds x="480" y="165" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_P_Send" bpmnElement="P_Send">
+        <dc:Bounds x="670" y="165" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_P_End" bpmnElement="P_End">
+        <dc:Bounds x="860" y="165" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_W_Start" bpmnElement="W_Start">
+        <dc:Bounds x="100" y="415" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_W_Expected" bpmnElement="W_Expected">
+        <dc:Bounds x="290" y="415" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_W_Receive" bpmnElement="W_Receive">
+        <dc:Bounds x="480" y="415" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_W_Send" bpmnElement="W_Send">
+        <dc:Bounds x="670" y="415" width="145" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_W_End" bpmnElement="W_End">
+        <dc:Bounds x="860" y="415" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Production_Flow_0" bpmnElement="Production_Flow_0">
+        <di:waypoint x="136" y="183.0" />
+        <di:waypoint x="290" y="200.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Production_Flow_1" bpmnElement="Production_Flow_1">
+        <di:waypoint x="435" y="200.0" />
+        <di:waypoint x="480" y="200.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Production_Flow_2" bpmnElement="Production_Flow_2">
+        <di:waypoint x="625" y="200.0" />
+        <di:waypoint x="670" y="200.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Production_Flow_3" bpmnElement="Production_Flow_3">
+        <di:waypoint x="815" y="200.0" />
+        <di:waypoint x="860" y="183.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_WMS_Flow_0" bpmnElement="WMS_Flow_0">
+        <di:waypoint x="136" y="433.0" />
+        <di:waypoint x="290" y="450.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_WMS_Flow_1" bpmnElement="WMS_Flow_1">
+        <di:waypoint x="435" y="450.0" />
+        <di:waypoint x="480" y="450.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_WMS_Flow_2" bpmnElement="WMS_Flow_2">
+        <di:waypoint x="625" y="450.0" />
+        <di:waypoint x="670" y="450.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_WMS_Flow_3" bpmnElement="WMS_Flow_3">
+        <di:waypoint x="815" y="450.0" />
+        <di:waypoint x="860" y="433.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Message" bpmnElement="Message_Registration">
+        <di:waypoint x="742" y="235" />
+        <di:waypoint x="742" y="330" />
+        <di:waypoint x="118" y="330" />
+        <di:waypoint x="118" y="415" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

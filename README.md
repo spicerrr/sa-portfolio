@@ -5,8 +5,8 @@
 **системный анализ · BPM · интеграции · данные**
 
 [![Profile](https://img.shields.io/badge/←_профиль-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/spicerrr)
-[![System Analysis](https://img.shields.io/badge/System_Analysis-1f6feb?style=flat-square)](#01--коммерческий-опыт)
-[![BPMN](https://img.shields.io/badge/BPMN-8250df?style=flat-square)](#02--sa-кейсы)
+[![System Analysis](https://img.shields.io/badge/System_Analysis-1f6feb?style=flat-square)](#02--коммерческий-опыт)
+[![BPMN](https://img.shields.io/badge/BPMN-8250df?style=flat-square)](#01--sa-кейсы)
 [![Data](https://img.shields.io/badge/Data-238636?style=flat-square)](#03--учебные-проекты-вшэ)
 
 </div>
@@ -15,7 +15,18 @@
 
 ---
 
-## 01 · коммерческий опыт
+## 01 · SA-кейсы
+
+| Кейс | Домен | Фокус | Статус |
+|:---|:---|:---|:---|
+| **Смена** | FitnessTech / mobile | Основной продуктовый кейс: приложение, игровой сценарий, жизненный цикл сессии, API и состояния | в работе |
+| [**🌱 Агроконтур**](agritech/README.md) | AgriTech / внутренние системы | Рабочий контекст «Агроном-Сада»: MDM, Production → WMS, контракты, сверка данных и «Паспорт сорта» | пакет артефактов v1.0; реконструкция |
+
+«Смена» демонстрирует продуктовую проработку приложения. «Агроконтур» — анализ корпоративных процессов и данных; он дополняет основной кейс другим типом задач.
+
+---
+
+## 02 · коммерческий опыт
 
 **«Агроном-Сад» / цифровая трансформация**
 
@@ -27,7 +38,9 @@
 | **Интеграции** | Фиксировала состав обмена, источник / получателя, JSON / XML, контрольные точки, ошибки и повторную обработку |
 | **Модели** | ERD для предметной области, UML для состояний / взаимодействий, BPMN для процессов и ручных разрывов |
 | **BI / отчётность** | Формализовала требования к данным и витринам; отдельный кусок — ТЗ на дашборд «Паспорт сорта» |
-| **Версионирование** | Git для технических артефактов: OpenAPI, PlantUML, SQL, mappings и служебные скрипты; feature-ветки → merge request → review → merge, теги для согласованных версий |
+| **Версионирование в публичной модели** | Git / GitLab для OpenAPI, PlantUML, SQL и mappings; порядок веток, MR и review показан в [агрокейсе](agritech/docs/versioning.md) |
+
+Предметный контекст основан на рабочем опыте; опубликованные архитектура, стек и GitLab-процесс — реконструкция. [Артефакты агрокейса](agritech/README.md).
 
 <details>
 <summary><b>🏗 контур ЦТ</b></summary>
@@ -55,17 +68,6 @@
 
 ---
 
-## 02 · SA-кейсы
-
-| Кейс | Домен | Что проверяю | Статус |
-|:---|:---|:---|:---|
-| **Смена** | FitnessTech / mobile | session lifecycle, REST API, State Machine, ERD, продуктовые события, ошибки и повторные запросы | в работе |
-| **AgriTech / internal systems** | internal product / enterprise | master data, ERP / WMS / TMS, интеграционные потоки, RabbitMQ, модели данных | реконструкция |
-
-
-
----
-
 ## 03 · учебные проекты ВШЭ
 
 | Домен | Проект | Что внутри |
@@ -82,3 +84,4 @@
 [![Profile](https://img.shields.io/badge/←_вернуться_в_профиль-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/spicerrr)
 
 </div>
+

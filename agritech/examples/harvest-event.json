@@ -1,0 +1,18 @@
+{
+  "eventId": "7bd14611-625f-40bd-817e-51258a29eb89",
+  "eventType": "harvest.batch.registered",
+  "eventVersion": 1,
+  "occurredAt": "2026-08-14T08:42:15Z",
+  "correlationId": "93af8148-15ec-4ec7-854b-8bc887e75a90",
+  "producer": "PRODUCTION",
+  "payload": {
+    "batchId": "HB-2026-001284",
+    "sourceSystem": "PRODUCTION",
+    "sourceRecordId": "SRC-1284",
+    "plotId": "PLOT-044",
+    "varietyId": "VAR-017",
+    "season": 2026,
+    "harvestDate": "2026-08-14",
+    "weightKg": 8420
+  }
+}

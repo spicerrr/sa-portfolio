@@ -1,0 +1,9 @@
+# Демонстрационный шаблон; запуск из корня sa-portfolio.
+image: python:3.12-slim
+stages: [validate]
+validate-agritech:
+  stage: validate
+  script:
+    - pip install -r agritech/requirements-check.txt
+    - python agritech/scripts/validate.py
+    - python agritech/scripts/normalize.py

@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agri events v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "eventId",
+        "eventType",
+        "eventVersion",
+        "occurredAt",
+        "correlationId",
+        "producer",
+        "payload"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "eventType": {
+          "type": "string",
+          "const": "harvest.batch.registered"
+        },
+        "eventVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "producer": {
+          "type": "string",
+          "const": "PRODUCTION"
+        },
+        "payload": {
+          "type": "object",
+          "required": [
+            "sourceSystem",
+            "sourceRecordId",
+            "plotId",
+            "varietyId",
+            "season",
+            "harvestDate",
+            "weightKg",
+            "batchId"
+          ],
+          "properties": {
+            "sourceSystem": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "sourceRecordId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "plotId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "varietyId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "season": {
+              "type": "integer",
+              "minimum": 2000,
+              "maximum": 2100
+            },
+            "harvestDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "weightKg": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "multipleOf": 0.001,
+              "maximum": 999999999.999
+            },
+            "batchId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "eventId",
+        "eventType",
+        "eventVersion",
+        "occurredAt",
+        "correlationId",
+        "producer",
+        "payload"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "eventType": {
+          "type": "string",
+          "const": "warehouse.lot.received"
+        },
+        "eventVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "occurredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "producer": {
+          "type": "string",
+          "const": "WMS"
+        },
+        "payload": {
+          "type": "object",
+          "required": [
+            "batchId",
+            "lotId",
+            "receivedWeightKg",
+            "receivedAt"
+          ],
+          "properties": {
+            "batchId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "lotId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "receivedWeightKg": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "multipleOf": 0.001,
+              "maximum": 999999999.999
+            },
+            "receivedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

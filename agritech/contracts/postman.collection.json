@@ -1,0 +1,95 @@
+{
+  "info": {
+    "name": "Агроконтур — contract requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Заменить .example URL на стенд. Токен вводить локально. Для нового факта заменить idempotencyKey и sourceRecordId."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "mdmUrl",
+      "value": "https://mdm.example"
+    },
+    {
+      "key": "productionUrl",
+      "value": "https://production.example"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "batchId",
+      "value": "HB-2026-001284"
+    },
+    {
+      "key": "idempotencyKey",
+      "value": "81e8cf95-2167-4e4f-94df-926270362c8c"
+    }
+  ],
+  "item": [
+    {
+      "name": "Resolve WMS variety",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{mdmUrl}}/api/v1/source-mappings/resolve?sourceSystem=WMS&entityType=VARIETY&sourceId=WMS-V-22"
+      }
+    },
+    {
+      "name": "Register harvest",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "url": "{{productionUrl}}/api/v1/harvest-batches",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceSystem\": \"PRODUCTION\",\n  \"sourceRecordId\": \"SRC-1284\",\n  \"plotId\": \"PLOT-044\",\n  \"varietyId\": \"VAR-017\",\n  \"season\": 2026,\n  \"harvestDate\": \"2026-08-14\",\n  \"weightKg\": 8420\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Registration confirmed\", () => pm.response.to.have.status(201));",
+              "if (pm.response.code === 201) { pm.collectionVariables.set(\"batchId\", pm.response.json().batchId); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get harvest",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{productionUrl}}/api/v1/harvest-batches/{{batchId}}"
+      }
+    }
+  ]
+}

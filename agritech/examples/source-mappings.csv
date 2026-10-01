@@ -1,0 +1,4 @@
+source_system,entity_type,source_id,source_name,variety_id
+ERP,VARIETY,ERP-V-104,Golden Delicious,VAR-017
+WMS,VARIETY,WMS-V-22,Голден,VAR-017
+LEGACY,VARIETY,LEG-V-7,ГОЛДЕН ДЕЛИШЕС,VAR-017

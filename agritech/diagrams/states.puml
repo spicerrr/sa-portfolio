@@ -1,0 +1,16 @@
+@startuml
+title Локальная проекция приёмки
+[*] --> NO_RECEIPT : Production зарегистрировал партию
+NO_RECEIPT --> HAS_RECEIPT : валидное warehouse.lot.received.v1
+commit факта + inbox
+HAS_RECEIPT --> HAS_RECEIPT : повтор того же события
+без нового эффекта
+note right of NO_RECEIPT
+Нет подтверждения в локальной проекции.
+Не означает, что WMS не приняла груз.
+end note
+note right of HAS_RECEIPT
+Одна полная приёмка в v1.
+Исправление и частичная приёмка вне модели.
+end note
+@enduml

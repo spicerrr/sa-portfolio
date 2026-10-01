@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: Агроконтур — MDM / Production contracts
+  version: 1.0.0
+  description: Публичная реконструкция, без работающего стенда. См. docs/integration.md.
+servers:
+- url: https://production.example
+security:
+- bearerAuth: []
+paths:
+  /api/v1/source-mappings/resolve:
+    servers:
+    - url: https://mdm.example
+    get:
+      operationId: resolveSourceMapping
+      tags:
+      - MDM
+      description: Роли mdm_reader или production_operator. Только утверждённые mappings.
+      parameters:
+      - name: sourceSystem
+        in: query
+        required: true
+        schema: &id001
+          type: string
+          minLength: 1
+          maxLength: 100
+      - name: entityType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - VARIETY
+      - name: sourceId
+        in: query
+        required: true
+        schema: *id001
+      responses:
+        '200':
+          description: Approved mapping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+        '400': &id002
+          description: INVALID_REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401': &id003
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403': &id004
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404': &id006
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503': &id005
+          description: Temporarily unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/harvest-batches:
+    post:
+      operationId: registerHarvest
+      tags:
+      - Production
+      description: Роль production_operator. Атомарно batch + idempotency + outbox.
+        Повтор с тем же ключом/телом возвращает исходный 201.
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: &id007
+          type: string
+          format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HarvestCreate'
+      responses:
+        '201':
+          description: Registered; не подтверждение приёмки
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URI партии
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HarvestBatch'
+        '400': *id002
+        '401': *id003
+        '403': *id004
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Business validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503': *id005
+  /api/v1/harvest-batches/{batchId}:
+    get:
+      operationId: getHarvest
+      tags:
+      - Production
+      description: Роль production_operator. Последняя локальная проекция, не прямой
+        запрос WMS.
+      parameters:
+      - name: batchId
+        in: path
+        required: true
+        schema: *id001
+      responses:
+        '200':
+          description: Batch and latest receipt projection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HarvestBatch'
+        '400': *id002
+        '401': *id003
+        '403': *id004
+        '404': *id006
+        '503': *id005
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    HarvestCreate:
+      type: object
+      additionalProperties: false
+      required:
+      - sourceSystem
+      - sourceRecordId
+      - plotId
+      - varietyId
+      - season
+      - harvestDate
+      - weightKg
+      properties:
+        sourceSystem: *id001
+        sourceRecordId: *id001
+        plotId: *id001
+        varietyId: *id001
+        season: &id010
+          type: integer
+          minimum: 2000
+          maximum: 2100
+        harvestDate: &id011
+          type: string
+          format: date
+        weightKg: &id012
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          multipleOf: 0.001
+          maximum: 999999999.999
+      example:
+        sourceSystem: PRODUCTION
+        sourceRecordId: SRC-1284
+        plotId: PLOT-044
+        varietyId: VAR-017
+        season: 2026
+        harvestDate: '2026-08-14'
+        weightKg: 8420
+    Receipt:
+      type: object
+      required: &id008
+      - lotId
+      - receivedWeightKg
+      - receivedAt
+      properties: &id009
+        lotId: *id001
+        receivedWeightKg:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          multipleOf: 0.001
+          maximum: 999999999.999
+        receivedAt:
+          type: string
+          format: date-time
+    HarvestBatch:
+      type: object
+      required:
+      - batchId
+      - status
+      - correlationId
+      - receipt
+      - sourceSystem
+      - sourceRecordId
+      - plotId
+      - varietyId
+      - season
+      - harvestDate
+      - weightKg
+      properties:
+        batchId: *id001
+        status:
+          type: string
+          enum:
+          - REGISTERED
+        correlationId: *id007
+        receipt:
+          type: object
+          required: *id008
+          properties: *id009
+          nullable: true
+        sourceSystem: *id001
+        sourceRecordId: *id001
+        plotId: *id001
+        varietyId: *id001
+        season: *id010
+        harvestDate: *id011
+        weightKg: *id012
+      example:
+        batchId: HB-2026-001284
+        status: REGISTERED
+        correlationId: 93af8148-15ec-4ec7-854b-8bc887e75a90
+        receipt: null
+        sourceSystem: PRODUCTION
+        sourceRecordId: SRC-1284
+        plotId: PLOT-044
+        varietyId: VAR-017
+        season: 2026
+        harvestDate: '2026-08-14'
+        weightKg: 8420
+    Mapping:
+      type: object
+      required:
+      - varietyId
+      - canonicalName
+      - status
+      properties:
+        varietyId: *id001
+        canonicalName:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      - correlationId
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        correlationId: *id007
