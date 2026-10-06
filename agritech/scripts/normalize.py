@@ -1,4 +1,4 @@
-"""Поиск по утверждённым ID; нормализация имени не создаёт mapping."""
+"""Поиск по утверждённым идентификаторам; нормализация имени не создаёт новое соответствие."""
 import csv
 import json
 import unicodedata
@@ -12,7 +12,7 @@ def resolve():
         for row in csv.DictReader(stream):
             key = (row["source_system"], row["entity_type"], row["source_id"])
             if key in mappings:
-                raise ValueError(f"Повтор ключа mapping: {key}")
+                raise ValueError(f"Повтор ключа соответствия: {key}")
             mappings[key] = row["variety_id"]
     result = []
     with (ROOT / "examples/source-records.csv").open() as stream:
