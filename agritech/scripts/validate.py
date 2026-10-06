@@ -26,16 +26,16 @@ def main():
         events[name] = event
     assert events['harvest']['payload']['batchId'] == events['receipt']['payload']['batchId']
     assert events['harvest']['correlationId'] == events['receipt']['correlationId']
-    # Negative checks prevent accepting wrong versions or cross-kind payloads.
+    # Отрицательные проверки не дают принять неверную версию или неподходящее тело события.
     for name, change in [('harvest', 'version'), ('receipt', 'payload')]:
         bad = copy.deepcopy(events[name])
         if change == 'version': bad['eventVersion'] = 2
         else: bad['payload'] = events['harvest']['payload']
-        assert not validator.is_valid(bad), f'Invalid {change} accepted'
+        assert not validator.is_valid(bad), f'Принят некорректный вариант: {change}'
     request = json.loads((ROOT / 'examples/register-request.json').read_text())
     assert all(events['harvest']['payload'][k] == v for k, v in request.items())
     assert set(request) == set(api['components']['schemas']['HarvestCreate']['required'])
-    # Validate API request example using corresponding JSON Schema semantics.
+    # Проверяем пример запроса API по соответствующей JSON Schema.
     request_schema = copy.deepcopy(api['components']['schemas']['HarvestCreate'])
     weight = request_schema['properties']['weightKg']
     weight['exclusiveMinimum'] = weight.pop('minimum')
@@ -65,7 +65,7 @@ def main():
     bpmn = ET.parse(ROOT / 'diagrams/batch-process.bpmn').getroot()
     elements = list(bpmn.iter())
     ids = [e.attrib['id'] for e in elements if 'id' in e.attrib]
-    assert len(ids) == len(set(ids)), 'Duplicate BPMN ID'
+    assert len(ids) == len(set(ids)), 'Повтор идентификатора BPMN'
     for e in elements:
         for key in ['sourceRef', 'targetRef', 'processRef', 'bpmnElement']:
             if key in e.attrib: assert e.attrib[key] in ids, (key, e.attrib[key])
@@ -75,9 +75,9 @@ def main():
     result = resolve()
     assert [r['status'] for r in result] == ['RESOLVED', 'RESOLVED', 'UNRESOLVED']
     assert [r['varietyId'] for r in result[:2]] == ['VAR-017', 'VAR-017']
-    # Independent arithmetic of expected synthetic metric result.
+    # Независимо проверяем арифметику контрольного набора.
     assert sum(map(Decimal, ['8.420', '1.580', '5.000'])) / Decimal('5') == Decimal('3')
     assert Decimal('8.370') - Decimal('8.420') == Decimal('-0.050')
-    print(f'OK: OpenAPI; event schemas/examples + negative checks; {len(rule_ids)} requirements covered; document/image links; 8 rendered UML; 5 use cases; legacy source decisions; BPMN; Postman; MDM; metric arithmetic.')
+    print(f'OK: OpenAPI; схемы и примеры событий; отрицательные проверки; покрыто требований: {len(rule_ids)}; ссылки; UML; сценарии использования; исходные данные; BPMN; Postman; справочники; расчёты.')
 
 if __name__ == '__main__': main()
