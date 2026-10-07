@@ -1,8 +1,8 @@
 <div align="center">
 
-# sa-portfolio
+# Системный аналитик Елизавета
 
-### системный анализ · требования · API · интеграции · данные
+### требования · API · интеграции · данные
 
 [![OpenAPI](https://img.shields.io/badge/OpenAPI_3.0-6BA539?style=flat-square&logo=swagger&logoColor=white)](agritech/contracts/openapi.yaml)
 [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white)](agritech/docs/integration.md)
