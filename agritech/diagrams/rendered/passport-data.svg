@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+<title id="title">Источники и расчёт показателей «Паспорта сорта»</title>
+<desc id="desc">Целевая схема. Агрономическая служба ведёт посадки, производство — сбор, склад — приёмку. Площадь и сбор агрегируются отдельно. Приёмка связывается со сбором по идентификатору партии; отсутствие подтверждения отделяется от разницы масс.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#53677a"/></marker>
+<style>
+text{font-family:"DejaVu Sans",sans-serif;fill:#1e2933}
+.title{font-size:23px;font-weight:600}
+.label{font-size:17px;font-weight:600}
+.body{font-size:15px}
+.small{font-size:13px;fill:#52616e}
+.box{fill:#f8fafb;stroke:#b8c3cd}
+.line{fill:none;stroke:#53677a;stroke-width:1.5;marker-end:url(#arrow)}
+</style>
+</defs>
+<rect width="1100" height="660" fill="white"/>
+<text x="30" y="40" class="title">Источники и расчёт показателей</text>
+<text x="30" y="66" class="small">«Паспорт сорта» · целевая схема данных</text>
+
+<rect x="30" y="94" width="320" height="134" class="box"/>
+<text x="48" y="122" class="label">Агрономическая служба</text>
+<text x="48" y="151" class="body">Реестр посадок</text>
+<text x="48" y="178" class="body">Участок · сезон · сорт</text>
+<text x="48" y="205" class="body">Плодоносящая площадь, га</text>
+
+<rect x="390" y="94" width="320" height="134" class="box"/>
+<text x="408" y="122" class="label">Производственный учёт</text>
+<text x="408" y="151" class="body">Строка документа сбора</text>
+<text x="408" y="178" class="body">Участок · сезон · сорт</text>
+<text x="408" y="205" class="body">Дата · масса · ключ документа</text>
+
+<rect x="750" y="94" width="320" height="134" class="box"/>
+<text x="768" y="122" class="label">Склад</text>
+<text x="768" y="151" class="body">Документ приёмки</text>
+<text x="768" y="178" class="body">Ссылка на партию сбора</text>
+<text x="768" y="205" class="body">Дата · складская масса</text>
+
+<path d="M190 228V284" class="line"/>
+<path d="M470 228V252H350V284" class="line"/>
+<path d="M630 228V252H750V284" class="line"/>
+<path d="M910 228V284" class="line"/>
+
+<rect x="30" y="292" width="500" height="137" class="box"/>
+<text x="48" y="321" class="label">Посадка и сбор</text>
+<text x="48" y="350" class="body">Проверка участка, сезона и сорта</text>
+<text x="48" y="378" class="body">Площадь — один раз на посадку в сезоне</text>
+<text x="48" y="406" class="body">Сбор — сумма зарегистрированных фактов</text>
+
+<rect x="570" y="292" width="500" height="137" class="box"/>
+<text x="588" y="321" class="label">Сбор и приёмка</text>
+<text x="588" y="350" class="body">Связь документов по номеру партии</text>
+<text x="588" y="378" class="body">Сохранение обоих измерений массы</text>
+<text x="588" y="406" class="body">Выделение партий без подтверждения</text>
+
+<path d="M280 429V475" class="line"/>
+<path d="M820 429V475" class="line"/>
+<rect x="30" y="483" width="1040" height="128" fill="#edf3f7" stroke="#728c9f"/>
+<text x="48" y="513" class="label">Паспорт сорта за сезон</text>
+<text x="48" y="545" class="body">Площадь · сбор · урожайность</text>
+<text x="588" y="545" class="body">Подтверждённая приёмка · полнота</text>
+<text x="48" y="578" class="body">Урожайность = сбор / площадь</text>
+<text x="588" y="578" class="body">Разница масс — только по связанным парам</text>
+<text x="30" y="641" class="small">Проверка итогов: сорт → сезон → участок → исходные документы сбора и приёмки.</text>
+</svg>
