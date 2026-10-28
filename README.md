@@ -81,6 +81,6 @@
 
 ### Открыть артефакты
 
-[**Карта BA ↔ SA и маршрут чтения**](https://github.com/spicerrr/ddx-smena-sa/blob/main/NAVIGATION.md) · [Бизнес-постановка](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/ba/docs/01-product-brief.md) · [Системные требования](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/sa/docs/02-requirements.md) · [OpenAPI](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/sa/contracts/openapi.yaml) · [Демо](https://github.com/spicerrr/ddx-smena-sa/tree/main/first-set/demo)
+[**Описание проекта «Первый подход»**](https://github.com/spicerrr/ddx-smena-sa/blob/main/README.md) · [BA: продуктовая постановка](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/ba/README.md) · [SA: системная спецификация](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/sa/README.md) · [OpenAPI](https://github.com/spicerrr/ddx-smena-sa/blob/main/first-set/sa/contracts/openapi.yaml) · [Демо](https://github.com/spicerrr/ddx-smena-sa/tree/main/first-set/demo)
 
 *Независимый учебно-портфельный кейс; не заказ и не официальная разработка DDX Fitness / DDX TECH.*
