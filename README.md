@@ -52,7 +52,7 @@
 
 <a id="production-artifacts"></a>
 
-[**Открыть «Паспорт сорта»: задача, моя работа и документы →**](agritech/README.md)
+[**Открыть «Паспорт сорта»: задача, моя работа и документы →**](https://github.com/spicerrr/agritech)
 
 ---
 
